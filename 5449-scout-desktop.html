@@ -1090,10 +1090,11 @@ document.getElementById("changeAvatarBtn").addEventListener("click",()=>{
 });
 
 function refreshMe(){
+  state.scoutName = "prototype5449";
   document.getElementById("meAvatar").textContent = state.avatar || "🐝";
-  document.getElementById("meName").textContent = state.scoutName || "--";
+  document.getElementById("meName").textContent = state.scoutName;
   const allRecs = loadRecs();
-  const myRecs = allRecs.filter(r=>r.scoutName===state.scoutName);
+  const myRecs = allRecs.filter(r=>r.scoutName==="prototype5449" || r.scoutName===state.scoutName);
   document.getElementById("meCount").textContent = "已记 "+myRecs.length+" 场";
   document.getElementById("myHistory").innerHTML = myRecs.slice().reverse().map(r=>{
     const idx = allRecs.indexOf(r);
