@@ -633,7 +633,7 @@ function clearCounters(){ resetCounters(); }
 function renderRecentTeams(){
   const recs=loadRecs();
   const seen=[];
-  recs.slice().reverse().forEach(r=>{ if(r.team && !seen.includes(r.team)) seen.push(r.team); });
+  recs.slice().reverse().forEach(r=>{ if(r.team && r.team!=="test" && !seen.includes(r.team)) seen.push(r.team); });
   const recent=seen.slice(0,6);
   const el=document.getElementById("recentTeams");
   if(!recent.length){ el.innerHTML=""; return; }
