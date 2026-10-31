@@ -690,7 +690,21 @@ function renderMatchStatus(){
     return `<span style="padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;${r?'background:#1a3a2a;color:#4ade80;':'background:#1a1d22;color:#555;'}">${label} ${r?'#'+r.team:'空'}</span>`;
   }).join("");
   const done=filled===4;
-  el.innerHTML=`<span style="color:#9aa0aa;font-size:12px;">M${m} 已填${filled}/4</span>${items}${done?'<span style="color:#4ade80;font-weight:800;margin-left:auto;">✓ 4队齐了 → 去预测</span>':''}`;
+  // consistency check: same alliance two robots
+  const red1=recs.find(x=>x.match===m && x.pos==="Red1");
+  const red2=recs.find(x=>x.match===m && x.pos==="Red2");
+  const blue1=recs.find(x=>x.match===m && x.pos==="Blue1");
+  const blue2=recs.find(x=>x.match===m && x.pos==="Blue2");
+  let warn="";
+  function checkAlliance(a,b,name){
+    if(!a||!b) return "";
+    const sa=(a.autoMade||0)+(a.teleMade||0), sb=(b.autoMade||0)+(b.teleMade||0);
+    const diff=Math.abs(sa-sb);
+    if(diff>6) return `<span style="color:#f66;font-size:11px;margin-left:6px;">⚠ ${name}总进球差${diff}(${sa} vs ${sb})</span>`;
+    return "";
+  }
+  warn=checkAlliance(red1,red2,"红")+checkAlliance(blue1,blue2,"蓝");
+  el.innerHTML=`<span style="color:#9aa0aa;font-size:12px;">M${m} 已填${filled}/4</span>${items}${warn}${done?'<span style="color:#4ade80;font-weight:800;margin-left:auto;">✓ 4队齐了 → 去预测</span>':''}`;
 }
 
 function renderRecentList(){
