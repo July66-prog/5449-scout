@@ -388,7 +388,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 </div>
 
 <!-- ===== EVENT SELECT ===== -->
-<div id="eventSel" style="display:none;position:fixed;inset:0;background:#0e1013;z-index:195;">
+<div id="eventOverlay" style="display:none;position:fixed;inset:0;background:#0e1013;z-index:195;">
   <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;">
     <div style="font-size:20px;font-weight:800;margin-bottom:6px;color:#ff9500;">5449 SCOUT</div>
     <div style="font-size:14px;color:#9aa0aa;margin-bottom:28px;">选择赛事</div>
@@ -1173,14 +1173,14 @@ function doLogin(){
   localStorage.setItem(SESSION_KEY, JSON.stringify({ name, avatar: state.avatar }));
   document.getElementById("login").style.display="none";
   // always show event selection
-  document.getElementById("eventSel").style.display="flex";
+  document.getElementById("eventOverlay").style.display="flex";
 }
 
-document.querySelectorAll("#eventSel [data-ev]").forEach(btn=>{
+document.querySelectorAll("#eventOverlay [data-ev]").forEach(btn=>{
   btn.onclick=()=>{
     const ev=btn.dataset.ev;
     localStorage.setItem("scout5449_event", ev);
-    document.getElementById("eventSel").style.display="none";
+    document.getElementById("eventOverlay").style.display="none";
     enterApp(ev);
   };
 });
@@ -1199,7 +1199,7 @@ function enterApp(ev){
 function logout(){ localStorage.removeItem(SESSION_KEY); location.reload(); }
 document.getElementById("logoutBtn").addEventListener("click", logout);
 document.getElementById("homeBtn").addEventListener("click",()=>{
-  document.getElementById("eventSel").style.display="flex";
+  document.getElementById("eventOverlay").style.display="flex";
 });
 
 document.getElementById("saveScoutNameBtn").addEventListener("click",()=>{
