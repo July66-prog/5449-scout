@@ -458,16 +458,12 @@ async function fetchCloud(){
   try{
     const {data,error} = await sb.from("records").select("*");
     if(error) return;
-    const local = loadRecs();
-    const merged = [...local];
+    // cloud is source of truth - replace local entirely
     data.forEach(c=>{
       if(c.bounsRp!==undefined){ c.bonusRp=c.bounsRp; delete c.bounsRp; }
       c.scoutName = "prototype5449";
-      const i = merged.findIndex(m=>m.match===c.match && m.team===c.team && m.pos===c.pos);
-      if(i>=0) merged[i] = {...merged[i], ...c};
-      else merged.push(c);
     });
-    saveRecs(merged);
+    saveRecs(data);
     refreshCount();
     renderMatchStatus();
   }catch(e){}
