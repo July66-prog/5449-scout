@@ -487,6 +487,12 @@ const ENDGAME_PTS = {None:0, Leave:3, Park:5, Both:8};
 // 赛程表 - 赛前几天从官网爬取后填入
 // 格式: MATCHES["sh1"][1] = {Red1:12527, Red2:19600, Blue1:19914, Blue2:19965}
 const MATCHES = { sh1:{}, sh2:{}, sh3:{}, sh4:{} };
+// 每个赛事的队伍名单 - 赛前填入
+const EVENT_TEAMS = {
+  sh1: ["12527","19600","19606","19641","19666","19726","19859","19877","19914","19965","20827","22406"],
+  sh2: ["24667","25218","28660","31558","32669","36876","37048","37049","37050","37502","37691","37841"],
+  sh3: [], sh4: []
+};
 function autoFillTeams(){
   const ev = document.getElementById("eventSel").value;
   if(!ev || !MATCHES[ev][state.match]) return;
@@ -558,12 +564,21 @@ checkCloud(); setInterval(checkCloud,5000);
 function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1200); }
 
 // team dropdown
-(function(){
+function refreshTeamDropdown(){
   const sel = document.getElementById("team");
-  Object.keys(ROSTER).sort((a,b)=>a-b).forEach(t=>{
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- 选队 --</option>';
+  const ev = localStorage.getItem("scout5449_event") || "";
+  let teams = Object.keys(ROSTER).sort((a,b)=>a-b);
+  if(ev && EVENT_TEAMS[ev] && EVENT_TEAMS[ev].length){
+    teams = EVENT_TEAMS[ev];
+  }
+  teams.forEach(t=>{
     const o=document.createElement("option"); o.value=t; o.textContent="#"+t+" "+ROSTER[t]+" · "+(CITY[t]||""); sel.appendChild(o);
   });
-})();
+  if(cur) sel.value = cur;
+}
+refreshTeamDropdown();
 
 // position tabs - each position remembers its own team
 const posTeams = { Red1:"", Red2:"", Blue1:"", Blue2:"" };
@@ -1157,14 +1172,8 @@ function doLogin(){
   state.avatar = users[name].avatar || "🐝";
   localStorage.setItem(SESSION_KEY, JSON.stringify({ name, avatar: state.avatar }));
   document.getElementById("login").style.display="none";
-  // show event selection
+  // always show event selection
   document.getElementById("eventSel").style.display="flex";
-  // if already selected event, skip
-  const savedEv = localStorage.getItem("scout5449_event");
-  if(savedEv){
-    document.getElementById("eventSel").style.display="none";
-    enterApp(savedEv);
-  }
 }
 
 document.querySelectorAll("#eventSel [data-ev]").forEach(btn=>{
@@ -1177,8 +1186,10 @@ document.querySelectorAll("#eventSel [data-ev]").forEach(btn=>{
 });
 
 function enterApp(ev){
+  localStorage.setItem("scout5449_event", ev);
   document.getElementById("eventSel").value=ev;
   document.getElementById("eventSel").querySelectorAll("option").forEach(o=>{ if(o.value===ev) o.selected=true; });
+  refreshTeamDropdown();
   toast("欢迎 "+state.scoutName);
   refreshMe();
   fetchCloud();
