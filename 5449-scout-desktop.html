@@ -164,6 +164,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   <div class="topbar">
     <div class="logo"><span>5449</span> SCOUT</div>
     <div class="rec-count" id="recCount">0 条</div>
+    <span id="cloudDot" style="font-size:11px;color:#f66;">● 离线</span>
     <div class="sep"></div>
     <div><span class="field-label">Match</span><input type="number" id="match" value="1" min="1"></div>
     <div>
@@ -476,6 +477,16 @@ function subscribeCloud(){
   sb.channel("records").on("postgres_changes",{event:"*",schema:"public",table:"records"},()=>{ fetchCloud(); }).subscribe();
 }
 fetchCloud(); subscribeCloud();
+// cloud status check
+async function checkCloud(){
+  try{
+    const {error} = await sb.from("records").select("*").limit(1);
+    const dot = document.getElementById("cloudDot");
+    if(error){ dot.textContent="● 离线"; dot.style.color="#f66"; }
+    else { dot.textContent="● 云端"; dot.style.color="#6f6"; }
+  }catch(e){ document.getElementById("cloudDot").textContent="● 离线"; document.getElementById("cloudDot").style.color="#f66"; }
+}
+checkCloud(); setInterval(checkCloud,5000);
 function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1200); }
 
 // team dropdown
