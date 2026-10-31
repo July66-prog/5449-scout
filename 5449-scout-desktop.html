@@ -170,6 +170,15 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     <span id="cloudDot" style="font-size:11px;color:#f66;">● 离线</span>
     <span id="onlineDot" style="font-size:11px;color:#6f6;">● 在线 0 台</span>
     <div class="sep"></div>
+    <div><span class="field-label">赛事</span>
+      <select id="eventSel" style="background:#1a1d23;border:1px solid #2a2e35;color:#fff;padding:6px 10px;border-radius:8px;font-size:13px;">
+        <option value="">手动选队</option>
+        <option value="sh1">上海 #1 (11/9-15)</option>
+        <option value="sh2">上海 #2 (11/9-15)</option>
+        <option value="sh3">上海 #3 (12/7-13)</option>
+        <option value="sh4">上海 #4 (12/7-13)</option>
+      </select>
+    </div>
     <div><span class="field-label">Match</span><input type="number" id="match" value="1" min="1"></div>
     <div>
       <span class="field-label">我的位置</span>
@@ -453,6 +462,16 @@ const INFO = {
   "37502":[2026,"北京鼎石学校"],"37691":[2026,"上海文来中学"],"37841":[2026,"北京鼎石学校"]
 };
 const ENDGAME_PTS = {None:0, Leave:3, Park:5, Both:8};
+// 赛程表 - 赛前几天从官网爬取后填入
+// 格式: MATCHES["sh1"][1] = {Red1:12527, Red2:19600, Blue1:19914, Blue2:19965}
+const MATCHES = { sh1:{}, sh2:{}, sh3:{}, sh4:{} };
+function autoFillTeams(){
+  const ev = document.getElementById("eventSel").value;
+  if(!ev || !MATCHES[ev][state.match]) return;
+  const m = MATCHES[ev][state.match];
+  // fill match status with scheduled teams
+  renderMatchStatus();
+}
 
 function loadRecs(){ try{return JSON.parse(localStorage.getItem(KEY)||"[]");}catch(e){return [];} }
 function saveRecs(r){ localStorage.setItem(KEY, JSON.stringify(r)); }
@@ -561,6 +580,8 @@ document.getElementById("team").value="";
 document.getElementById("match").addEventListener("input",e=>{
   state.match=+e.target.value||1;
   renderMatchStatus();
+  // auto-fill teams from schedule if available
+  autoFillTeams();
   // reload existing record for current position + new match
   const recs=loadRecs();
   const existing=recs.find(r=>r.match===state.match && r.pos===state.pos);
@@ -681,13 +702,16 @@ function renderMatchStatus(){
   const el=document.getElementById("matchStatus"); if(!el) return;
   const recs=loadRecs();
   const m=state.match;
+  const ev=document.getElementById("eventSel").value;
+  const sched = ev&&MATCHES[ev][m] ? MATCHES[ev][m] : null;
   const positions=["Red1","Red2","Blue1","Blue2"];
   let filled=0;
   const items=positions.map(pos=>{
     const r=recs.find(x=>x.match===m && x.pos===pos);
     if(r) filled++;
     const label=pos==="Red1"?"红1":pos==="Red2"?"红2":pos==="Blue1"?"蓝1":"蓝2";
-    return `<span style="padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;${r?'background:#1a3a2a;color:#4ade80;':'background:#1a1d22;color:#555;'}">${label} ${r?'#'+r.team:'空'}</span>`;
+    const team = r? r.team : (sched?sched[pos]:"");
+    return `<span style="padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;${r?'background:#1a3a2a;color:#4ade80;':(team?'background:#1a2a3a;color:#6ab0ff;':'background:#1a1d22;color:#555;')}">${label} ${team?'#'+team:'空'}</span>`;
   }).join("");
   const done=filled===4;
   // consistency check: same alliance two robots
