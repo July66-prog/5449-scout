@@ -1060,6 +1060,7 @@ function doLogin(){
   document.getElementById("login").style.display="none";
   toast("欢迎 "+name);
   refreshMe();
+  fetchCloud();
 }
 
 function logout(){ localStorage.removeItem(SESSION_KEY); location.reload(); }
