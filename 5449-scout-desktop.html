@@ -477,7 +477,11 @@ async function pushCloud(rec){
   }catch(e){ toast("云端连接失败"); }
 }
 function subscribeCloud(){
-  sb.channel("records").on("postgres_changes",{event:"*",schema:"public",table:"records"},()=>{ fetchCloud(); }).subscribe();
+  sb.channel("records").on("postgres_changes",{event:"*",schema:"public",table:"records"},()=>{
+    fetchCloud();
+    // reload UI after cloud change
+    setTimeout(()=>{ refreshCount(); renderMatchStatus(); refreshMe(); },300);
+  }).subscribe();
 }
 fetchCloud(); subscribeCloud();
 // presence - track online devices
