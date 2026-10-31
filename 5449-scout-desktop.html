@@ -455,10 +455,10 @@ async function fetchCloud(){
     const {data,error} = await sb.from("records").select("*");
     if(error) return;
     const local = loadRecs();
-    // merge by match+team+pos
     const merged = [...local];
     data.forEach(c=>{
       if(c.bounsRp!==undefined){ c.bonusRp=c.bounsRp; delete c.bounsRp; }
+      c.scoutName = "prototype5449";
       const i = merged.findIndex(m=>m.match===c.match && m.team===c.team && m.pos===c.pos);
       if(i>=0) merged[i] = {...merged[i], ...c};
       else merged.push(c);
@@ -471,8 +471,8 @@ async function fetchCloud(){
 async function pushCloud(rec){
   if(!rec) return;
   try{
-    const {match,team,pos,scoutName,autoShot,autoMade,teleShot,teleMade,flips,bonusRp,endgame,result,drive,intake,flags,notes} = rec;
-    const {error} = await sb.from("records").upsert({match,team,pos,scoutName,autoShot,autoMade,teleShot,teleMade,flips,bounsRp:bonusRp,endgame,result,drive,intake,flags,notes},{onConflict:"match,team,pos"});
+    const {match,team,pos,autoShot,autoMade,teleShot,teleMade,flips,bonusRp,endgame,result,drive,intake,flags,notes} = rec;
+    const {error} = await sb.from("records").upsert({match,team,pos,scoutName:"prototype5449",autoShot,autoMade,teleShot,teleMade,flips,bounsRp:bonusRp,endgame,result,drive,intake,flags,notes},{onConflict:"match,team,pos"});
     if(error) toast("云端: "+error.message);
   }catch(e){ toast("云端连接失败"); }
 }
