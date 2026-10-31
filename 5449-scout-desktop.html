@@ -468,8 +468,9 @@ async function pushCloud(rec){
   if(!rec) return;
   try{
     const {match,team,pos,scoutName,autoShot,autoMade,teleShot,teleMade,flips,bonusRp,endgame,result,drive,intake,flags,notes} = rec;
-    await sb.from("records").upsert({match,team,pos,scoutName,autoShot,autoMade,teleShot,teleMade,flips,bounsRp:bonusRp,endgame,result,drive,intake,flags,notes},{onConflict:"match,team,pos"});
-  }catch(e){}
+    const {error} = await sb.from("records").upsert({match,team,pos,scoutName,autoShot,autoMade,teleShot,teleMade,flips,bounsRp:bonusRp,endgame,result,drive,intake,flags,notes},{onConflict:"match,team,pos"});
+    if(error) toast("云端: "+error.message);
+  }catch(e){ toast("云端连接失败"); }
 }
 function subscribeCloud(){
   sb.channel("records").on("postgres_changes",{event:"*",schema:"public",table:"records"},()=>{ fetchCloud(); }).subscribe();
