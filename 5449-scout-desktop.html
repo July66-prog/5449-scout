@@ -1017,8 +1017,6 @@ function saveUsers(u){ localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
 
 setTimeout(()=>{
   document.getElementById("intro").classList.add("done");
-  const session = localStorage.getItem(SESSION_KEY);
-  if(session){ try{ const s=JSON.parse(session); state.scoutName=s.name; state.avatar=s.avatar||"🐝"; setTimeout(()=>document.getElementById("intro").style.display="none",600); return; }catch(e){} }
   document.getElementById("intro").style.display="none";
   document.getElementById("login").style.display="flex";
   setTimeout(()=>document.getElementById("loginName").focus(),100);
