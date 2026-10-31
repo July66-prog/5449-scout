@@ -168,6 +168,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     <div class="logo"><span>5449</span> SCOUT</div>
     <div class="rec-count" id="recCount">0 条</div>
     <span id="cloudDot" style="font-size:11px;color:#f66;">● 离线</span>
+    <span id="onlineDot" style="font-size:11px;color:#6f6;">● 在线 0 台</span>
     <div class="sep"></div>
     <div><span class="field-label">Match</span><input type="number" id="match" value="1" min="1"></div>
     <div>
@@ -483,6 +484,18 @@ function subscribeCloud(){
   sb.channel("records").on("postgres_changes",{event:"*",schema:"public",table:"records"},()=>{ fetchCloud(); }).subscribe();
 }
 fetchCloud(); subscribeCloud();
+// presence - track online devices
+const presence = sb.channel("presence");
+presence.on("presence", { event: "join" }, () => updateOnline());
+presence.on("presence", { event: "leave" }, () => updateOnline());
+presence.on("presence", { event: "sync" }, () => updateOnline());
+presence.subscribe();
+presence.track({ user: "prototype5449", ts: Date.now() });
+function updateOnline(){
+  const state = presence.presenceState();
+  const count = Object.keys(state||{}).length;
+  document.getElementById("onlineDot").textContent = "● 在线 "+count+" 台";
+}
 // cloud status check
 async function checkCloud(){
   try{
