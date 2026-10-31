@@ -1008,6 +1008,12 @@ const AVATARS = ["🐝","🤖","⚙️","🔧","🏎️","🎯","📊","🐻","�
 function getUsers(){ try{ return JSON.parse(localStorage.getItem(USERS_KEY)||"{}"); }catch(e){ return {}; } }
 function saveUsers(u){ localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
 
+// pre-seed default shared account
+(function(){
+  const u = getUsers();
+  if(!u["prototype5449"]){ u["prototype5449"] = { pass:"5449", avatar:"🐝" }; saveUsers(u); }
+})();
+
 setTimeout(()=>{
   document.getElementById("intro").classList.add("done");
   const session = localStorage.getItem(SESSION_KEY);
