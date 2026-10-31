@@ -529,7 +529,9 @@ document.querySelectorAll(".pos-tab").forEach(tab=>{
     }
   });
 });
-document.querySelector('[data-pos="Red1"]').click();
+// start with no position selected - user picks position and team
+state.pos=""; state.team="";
+document.getElementById("team").value="";
 
 // match / team / notes
 document.getElementById("match").addEventListener("input",e=>{
