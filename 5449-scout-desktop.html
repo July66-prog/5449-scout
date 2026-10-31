@@ -349,6 +349,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       <div style="display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
         <button class="btn" id="changeNameBtn">改名字</button>
         <button class="btn" id="changeAvatarBtn">换头像</button>
+        <button class="btn" id="changeEventBtn">切换赛事</button>
         <button class="btn warn" id="logoutBtn">退出登录</button>
       </div>
       <div style="margin-top:16px;font-size:12px;color:#9aa0aa;">记录员名字（显示在每条记录上）</div>
@@ -383,6 +384,18 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     <input type="password" id="loginPass" placeholder="密码">
     <button id="loginBtn">进 入</button>
     <div class="login-hint">首次输入即注册</div>
+  </div>
+</div>
+
+<!-- ===== EVENT SELECT ===== -->
+<div id="eventSel" style="display:none;position:fixed;inset:0;background:#0e1013;z-index:190;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+  <div style="font-size:24px;font-weight:800;margin-bottom:20px;">选择赛事</div>
+  <div style="display:flex;flex-direction:column;gap:10px;width:280px;">
+    <button class="btn" style="padding:14px;font-size:16px;" data-ev="sh1">上海 #1 (11/9-15)</button>
+    <button class="btn" style="padding:14px;font-size:16px;" data-ev="sh2">上海 #2 (11/9-15)</button>
+    <button class="btn" style="padding:14px;font-size:16px;" data-ev="sh3">上海 #3 (12/7-13)</button>
+    <button class="btn" style="padding:14px;font-size:16px;" data-ev="sh4">上海 #4 (12/7-13)</button>
+    <button class="btn" style="padding:14px;font-size:16px;" data-ev="">手动选队</button>
   </div>
 </div>
 
@@ -1135,13 +1148,39 @@ function doLogin(){
   state.avatar = users[name].avatar || "🐝";
   localStorage.setItem(SESSION_KEY, JSON.stringify({ name, avatar: state.avatar }));
   document.getElementById("login").style.display="none";
-  toast("欢迎 "+name);
+  // show event selection
+  document.getElementById("eventSel").style.display="flex";
+  // if already selected event, skip
+  const savedEv = localStorage.getItem("scout5449_event");
+  if(savedEv){
+    document.getElementById("eventSel").style.display="none";
+    enterApp(savedEv);
+  }
+}
+
+document.querySelectorAll("#eventSel [data-ev]").forEach(btn=>{
+  btn.onclick=()=>{
+    const ev=btn.dataset.ev;
+    localStorage.setItem("scout5449_event", ev);
+    document.getElementById("eventSel").style.display="none";
+    enterApp(ev);
+  };
+});
+
+function enterApp(ev){
+  document.getElementById("eventSel").value=ev;
+  document.getElementById("eventSel").querySelectorAll("option").forEach(o=>{ if(o.value===ev) o.selected=true; });
+  toast("欢迎 "+state.scoutName);
   refreshMe();
   fetchCloud();
+  renderMatchStatus();
 }
 
 function logout(){ localStorage.removeItem(SESSION_KEY); location.reload(); }
 document.getElementById("logoutBtn").addEventListener("click", logout);
+document.getElementById("changeEventBtn").addEventListener("click",()=>{
+  document.getElementById("eventSel").style.display="flex";
+});
 
 document.getElementById("saveScoutNameBtn").addEventListener("click",()=>{
   const n = document.getElementById("scoutNameInput").value.trim();
