@@ -729,7 +729,10 @@ function renderHistory(){
     `<div class="h-item"><span><b>M${x.match}</b> · #${x.team} · ${x.pos||x.alliance||"?"} · 翻${x.flips||0}</span><span><button class="hbtn" data-edit="${i}">改</button><button class="hbtn del" data-del="${i}">删</button></span></div>`
   ).join("");
   document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{
-    const recs=loadRecs(); recs.splice(+b.dataset.del,1); saveRecs(recs); refreshCount(); toast("已删除");
+    const recs=loadRecs(); const rec=recs[+b.dataset.del];
+    recs.splice(+b.dataset.del,1); saveRecs(recs); refreshCount();
+    if(rec){ sb.from("records").delete().eq("match",rec.match).eq("team",rec.team).eq("pos",rec.pos); }
+    toast("已删除");
   });
   document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{
     const recs=loadRecs(); const x=recs[+b.dataset.edit];
@@ -810,7 +813,12 @@ document.getElementById("delLastBtn").addEventListener("click",()=>{
   const recs=loadRecs();
   const i=recs.findIndex(r=>r.match===state.match && r.pos===state.pos);
   if(i<0){ toast("本场此位置还没记录"); return; }
-  if(confirm("删除 "+state.pos+" M"+state.match+"？")){ recs.splice(i,1); saveRecs(recs); refreshCount(); toast("已删除"); }
+  if(confirm("删除 "+state.pos+" M"+state.match+"？")){
+    const rec=recs[i];
+    recs.splice(i,1); saveRecs(recs); refreshCount();
+    if(rec){ sb.from("records").delete().eq("match",rec.match).eq("team",rec.team).eq("pos",rec.pos); }
+    toast("已删除");
+  }
 });
 
 document.getElementById("exportCsvBtn").addEventListener("click",()=>{
@@ -1129,7 +1137,12 @@ function refreshMe(){
     btn.onclick=()=>{
       const i=+btn.dataset.del;
       if(confirm("删除这条记录？")){
-        const recs=loadRecs(); recs.splice(i,1); saveRecs(recs); refreshCount(); refreshMe(); toast("已删除");
+        const recs=loadRecs();
+        const rec=recs[i];
+        recs.splice(i,1); saveRecs(recs); refreshCount(); refreshMe();
+        // delete from cloud
+        if(rec){ sb.from("records").delete().eq("match",rec.match).eq("team",rec.team).eq("pos",rec.pos); }
+        toast("已删除");
       }
     };
   });
