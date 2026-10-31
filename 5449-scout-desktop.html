@@ -1021,28 +1021,7 @@ function showTeam(t){
   out.innerHTML=`<div class="profile"><div class="p-head"><span class="p-num">#${t}<small>${ROSTER[t]} · ${CITY[t]||""} · ${a.n}场</small></span>${badge}</div>
     ${info?`<div class="p-notes" style="margin-bottom:6px;">${info[1]} · 第${yrs}个赛季</div>`:""}
     <div class="bars">${bar("自动",c.autoShare)}${bar("手动",c.teleShare)}</div>
-    <div class="p-notes">${pros.length?"优势：<b class=g>"+pros.join("、")+"</b><br>":""}${cons.length?"弱点：<b class=r>"+cons.join("、")+"</b>":""}</div>
-    ${dataCheck(t)}</div>`;
-}
-
-function dataCheck(t){
-  const recs = loadRecs().filter(r=>r.team===t);
-  // group by match
-  const byMatch = {};
-  recs.forEach(r=>{ (byMatch[r.match]=byMatch[r.match]||[]).push(r); });
-  let html = "";
-  Object.entries(byMatch).forEach(([m,rs])=>{
-    if(rs.length<2) return;
-    // compare
-    const r0 = rs[0], r1 = rs[1];
-    const diff = Math.abs((r0.autoMade||0)-(r1.autoMade||0)) + Math.abs((r0.teleMade||0)-(r1.teleMade||0));
-    const flag = diff>3 ? '<span style="color:#f66;">⚠ 差异大</span>' : '<span style="color:#5dff8a;">✓ 一致</span>';
-    html += `<div style="margin-top:8px;padding:8px;background:#1a1d23;border-radius:8px;font-size:12px;">
-      M${m} 多人记录: ${rs.map(r=>r.scoutName||"?").join(" vs ")} ${flag}
-      <br>自动进球: ${r0.autoMade||0} vs ${r1.autoMade||0} · 手动进球: ${r0.teleMade||0} vs ${r1.teleMade||0}
-    </div>`;
-  });
-  return html;
+    <div class="p-notes">${pros.length?"优势：<b class=g>"+pros.join("、")+"</b><br>":""}${cons.length?"弱点：<b class=r>"+cons.join("、")+"</b>":""}</div></div>`;
 }
 
 function classifyTeam(a){
