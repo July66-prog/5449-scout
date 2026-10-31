@@ -453,17 +453,21 @@ const ENDGAME_PTS = {None:0, Leave:3, Park:5, Both:8};
 
 function loadRecs(){ try{return JSON.parse(localStorage.getItem(KEY)||"[]");}catch(e){return [];} }
 function saveRecs(r){ localStorage.setItem(KEY, JSON.stringify(r)); }
-// cloud sync
+// cloud sync - merge, don't wipe local-only records
 async function fetchCloud(){
   try{
     const {data,error} = await sb.from("records").select("*");
     if(error) return;
-    // cloud is source of truth - replace local entirely
     data.forEach(c=>{
       if(c.bounsRp!==undefined){ c.bonusRp=c.bounsRp; delete c.bounsRp; }
       c.scoutName = "prototype5449";
     });
-    saveRecs(data);
+    const local = loadRecs();
+    // keep local records that haven't been pushed to cloud yet (marked _local)
+    const cloudKeys = new Set(data.map(c=>c.match+"|"+c.team+"|"+c.pos));
+    const localOnly = local.filter(r=>r._local);
+    const merged = [...data, ...localOnly];
+    saveRecs(merged);
     refreshCount();
     renderMatchStatus();
   }catch(e){}
@@ -766,16 +770,23 @@ document.getElementById("saveBtn").addEventListener("click",()=>{
   if(!state.team){ toast("先选队号"); return; }
   if(!state.pos){ toast("先选位置"); return; }
   const recs=loadRecs();
-  if(window._editIdx!=null&&recs[window._editIdx]){
-    recs[window._editIdx]={...recs[window._editIdx],...state};
+  // find by stable key match+team+pos instead of index
+  const key = state.match+"|"+state.team+"|"+state.pos;
+  const existing = recs.findIndex(r=>r.match===state.match&&r.team===state.team&&r.pos===state.pos);
+  if(existing>=0){
+    recs[existing]={...recs[existing],...state,_local:false};
+    window._editIdx=existing;
     toast("已更新");
   } else {
-    recs.push({ts:new Date().toISOString(), scoutName: state.scoutName, ...state});
+    recs.push({ts:new Date().toISOString(), scoutName:"prototype5449", ...state,_local:true});
     window._editIdx=recs.length-1;
     toast("已保存 Match "+state.match+" · #"+state.team);
   }
   saveRecs(recs); refreshCount();
-  pushCloud(recs[window._editIdx]);
+  pushCloud(recs[window._editIdx]).then(()=>{
+    // clear local flag after successful push
+    recs[window._editIdx]._local=false; saveRecs(recs);
+  });
   saveBtnFlash();
 });
 
