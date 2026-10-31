@@ -169,6 +169,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     <div class="rec-count" id="recCount">0 条</div>
     <span id="cloudDot" style="font-size:11px;color:#f66;">● 离线</span>
     <span id="onlineDot" style="font-size:11px;color:#6f6;">● 在线 0 台</span>
+    <button id="homeBtn" style="background:none;border:1px solid #2a2e35;color:#9aa0aa;padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;">首页</button>
     <div class="sep"></div>
     <div><span class="field-label">赛事</span>
       <select id="eventSel" style="background:#1a1d23;border:1px solid #2a2e35;color:#fff;padding:6px 10px;border-radius:8px;font-size:13px;">
@@ -349,7 +350,6 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       <div style="display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
         <button class="btn" id="changeNameBtn">改名字</button>
         <button class="btn" id="changeAvatarBtn">换头像</button>
-        <button class="btn" id="changeEventBtn">切换赛事</button>
         <button class="btn warn" id="logoutBtn">退出登录</button>
       </div>
       <div style="margin-top:16px;font-size:12px;color:#9aa0aa;">记录员名字（显示在每条记录上）</div>
@@ -1187,7 +1187,7 @@ function enterApp(ev){
 
 function logout(){ localStorage.removeItem(SESSION_KEY); location.reload(); }
 document.getElementById("logoutBtn").addEventListener("click", logout);
-document.getElementById("changeEventBtn").addEventListener("click",()=>{
+document.getElementById("homeBtn").addEventListener("click",()=>{
   document.getElementById("eventSel").style.display="flex";
 });
 
