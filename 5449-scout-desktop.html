@@ -388,18 +388,27 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 </div>
 
 <!-- ===== EVENT SELECT ===== -->
-<div id="eventSel" style="display:none;position:fixed;inset:0;background:#0e1013;z-index:190;flex-direction:column;align-items:center;justify-content:center;">
-  <div style="font-size:24px;font-weight:800;margin-bottom:20px;color:#fff;">选择赛事</div>
-  <div style="display:flex;flex-direction:column;gap:10px;width:280px;">
-    <button class="btn" style="padding:14px;font-size:16px;" data-ev="sh1">上海 #1 (11/9-15)</button>
-    <button class="btn" style="padding:14px;font-size:16px;" data-ev="sh2">上海 #2 (11/9-15)</button>
-    <button class="btn" style="padding:14px;font-size:16px;" data-ev="sh3">上海 #3 (12/7-13)</button>
-    <button class="btn" style="padding:14px;font-size:16px;" data-ev="sh4">上海 #4 (12/7-13)</button>
-    <button class="btn" style="padding:14px;font-size:16px;" data-ev="">手动选队</button>
+<div id="eventSel" style="display:none;position:fixed;inset:0;background:#0e1013;z-index:195;">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;">
+    <div style="font-size:20px;font-weight:800;margin-bottom:6px;color:#ff9500;">5449 SCOUT</div>
+    <div style="font-size:14px;color:#9aa0aa;margin-bottom:28px;">选择赛事</div>
+    <div id="eventList" style="display:flex;flex-direction:column;gap:10px;width:300px;">
+      <button class="evbtn" data-ev="sh1">上海 #1 <small>11/9-15</small></button>
+      <button class="evbtn" data-ev="sh2">上海 #2 <small>11/9-15</small></button>
+      <button class="evbtn" data-ev="sh3">上海 #3 <small>12/7-13</small></button>
+      <button class="evbtn" data-ev="sh4">上海 #4 <small>12/7-13</small></button>
+      <button class="evbtn" data-ev="" style="opacity:.6;">手动选队</button>
+    </div>
   </div>
 </div>
 
 <style>
+.evbtn { padding:16px;font-size:16px;font-weight:700;background:#1a1d23;border:1px solid #2a2e35;color:#fff;border-radius:12px;cursor:pointer;text-align:center;transition:all .2s;animation:slideUp .4s cubic-bezier(.2,.8,.2,1) backwards; }
+.evbtn:nth-child(1){animation-delay:.05s}.evbtn:nth-child(2){animation-delay:.1s}.evbtn:nth-child(3){animation-delay:.15s}.evbtn:nth-child(4){animation-delay:.2s}.evbtn:nth-child(5){animation-delay:.25s}
+.evbtn:hover { background:#ff9500;border-color:#ff9500;transform:translateY(-2px); }
+.evbtn small { display:block;font-size:11px;color:#9aa0aa;font-weight:400;margin-top:2px; }
+.evbtn:hover small { color:rgba(255,255,255,.8); }
+@keyframes slideUp { from { opacity:0;transform:translateY(30px); } to { opacity:1;transform:translateY(0); } }
 #intro { position: fixed; inset: 0; background: #0e1013; z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity .6s; overflow: hidden; }
 #intro.done { opacity: 0; pointer-events: none; }
 #introLogo { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; animation: logoIn 1.2s cubic-bezier(.2,.8,.2,1); box-shadow: 0 0 60px rgba(255,149,0,.4); position: relative; z-index: 2; }
