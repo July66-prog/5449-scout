@@ -1390,7 +1390,7 @@ function renderEventList(filter){
 // 载入赛事按钮
 document.querySelector("#eventOverlay button[style*='ff9500']").onclick=()=>{
   renderEventList("");
-  toast("已载入官方赛事");
+  toast("已载入 "+OFFICIAL_EVENTS.length+" 场赛事");
 };
 // 搜索框
 document.querySelector("#eventOverlay input[placeholder*='Shanghai']").oninput=(e)=>{
@@ -1398,6 +1398,11 @@ document.querySelector("#eventOverlay input[placeholder*='Shanghai']").oninput=(
 };
 // 初始渲染
 renderEventList("");
+// 打开时也渲染
+document.getElementById("homeBtn").addEventListener("click",()=>{
+  document.getElementById("eventOverlay").style.display="block";
+  renderEventList("");
+});
 
 document.getElementById("saveScoutNameBtn").addEventListener("click",()=>{
   const n = document.getElementById("scoutNameInput").value.trim();
