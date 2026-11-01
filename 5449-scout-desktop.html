@@ -5359,13 +5359,21 @@ function teamAggregate(){
 }
 
 function fillTeamDropdowns(){
-  const agg=teamAggregate(); const teams=Object.keys(ROSTER).sort((a,b)=>a-b);
+  const agg=teamAggregate();
+  const ev = localStorage.getItem("scout5449_event") || "";
+  let teams;
+  if(ev && EVENT_TEAMS[ev]){
+    if(EVENT_TEAMS[ev].length) teams = EVENT_TEAMS[ev];
+    else teams = [];
+  } else {
+    teams = Object.keys(ROSTER).sort((a,b)=>a-b);
+  }
   ["r1","r2","b1","b2"].forEach(id=>{
     const sel=document.getElementById(id); const cur=sel.value;
-    sel.innerHTML='<option value="">-- 选队 --</option>'+teams.map(t=>{
+    sel.innerHTML='<option value="">-- 选队 --</option>'+ (teams.length?teams.map(t=>{
       const has=agg[t]?` (${agg[t].n}场)`:" (无数据)";
       return `<option value="${t}">#${t} ${ROSTER[t]} · ${CITY[t]||""}${has}</option>`;
-    }).join("");
+    }).join(""):'<option value="" disabled>-- 还未展示 --</option>');
     if(teams.includes(cur)) sel.value=cur;
   });
 }
