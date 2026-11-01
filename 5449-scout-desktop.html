@@ -388,16 +388,37 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 </div>
 
 <!-- ===== EVENT SELECT ===== -->
-<div id="eventOverlay" style="display:none;position:fixed;inset:0;background:#0e1013;z-index:195;">
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;">
-    <div style="font-size:48px;margin-bottom:8px;">🐝</div>
-    <div style="font-size:20px;font-weight:800;margin-bottom:6px;color:#ff9500;">5449 SCOUT</div>
-    <div style="font-size:14px;color:#9aa0aa;margin-bottom:28px;">选择赛事</div>
-    <div id="eventList" style="display:flex;flex-direction:column;gap:10px;width:300px;">
-      <button class="evbtn" data-ev="sh1">上海 #1 <small>11/9-15</small></button>
-      <button class="evbtn" data-ev="sh2">上海 #2 <small>11/9-15</small></button>
-      <button class="evbtn" data-ev="sh3">上海 #3 <small>12/7-13</small></button>
-      <button class="evbtn" data-ev="sh4">上海 #4 <small>12/7-13</small></button>
+<div id="eventOverlay" style="display:none;position:fixed;inset:0;background:#0e1013;z-index:195;overflow-y:auto;">
+  <div style="max-width:900px;margin:0 auto;padding:40px 20px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;">
+      <div style="font-size:28px;font-weight:800;color:#fff;">选择 FTC Events 赛事</div>
+      <button id="eventClose" style="background:#1a1d23;border:1px solid #2a2e35;color:#fff;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:14px;">关闭</button>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div style="font-size:13px;color:#9aa0aa;margin-bottom:8px;">赛季起始年</div>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <input type="number" value="2026" style="flex:1;background:#1a1d23;border:1px solid #2a2e35;color:#fff;padding:14px 16px;border-radius:10px;font-size:16px;">
+        <button style="background:#ff9500;border:none;color:#fff;padding:14px 24px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;white-space:nowrap;">载入官方赛事</button>
+      </div>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div style="font-size:13px;color:#9aa0aa;margin-bottom:8px;">搜索名称、国家、城市或代码</div>
+      <input type="text" placeholder="例如 China、Shanghai、USNJ" style="width:100%;background:#1a1d23;border:1px solid #2a2e35;color:#fff;padding:14px 16px;border-radius:10px;font-size:15px;box-sizing:border-box;">
+    </div>
+    <div style="font-size:13px;color:#9aa0aa;margin-bottom:16px;">按赛季载入赛事，或直接输入赛事链接。</div>
+    <div style="margin-bottom:24px;">
+      <div style="font-size:13px;color:#9aa0aa;margin-bottom:8px;">赛事代码或官方链接</div>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <input type="text" placeholder="例如 FTCCMP1EDIS 或完整赛事链接" style="flex:1;background:#1a1d23;border:1px solid #2a2e35;color:#fff;padding:14px 16px;border-radius:10px;font-size:15px;">
+        <button style="background:#1a1d23;border:1px solid #2a2e35;color:#fff;padding:14px 24px;border-radius:10px;font-size:15px;cursor:pointer;white-space:nowrap;">直接选择</button>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#666;margin-bottom:20px;">资格赛、淘汰赛、练习赛分开保存。分区赛事请选择具体 Division。公开赛程有缓存延迟，以官方现场信息为准。</div>
+    <div id="eventList" style="display:flex;flex-direction:column;gap:10px;">
+      <button class="evbtn" data-ev="sh1">China Shanghai #1 Qualifier <small>11/9-15 · SH</small></button>
+      <button class="evbtn" data-ev="sh2">China Shanghai #2 Qualifier <small>11/9-15 · SH</small></button>
+      <button class="evbtn" data-ev="sh3">China Shanghai #3 Qualifier <small>12/7-13 · SH</small></button>
+      <button class="evbtn" data-ev="sh4">China Shanghai #4 Qualifier <small>12/7-13 · SH</small></button>
       <button class="evbtn" data-ev="" style="opacity:.6;">手动选队</button>
     </div>
   </div>
@@ -1202,7 +1223,10 @@ function enterApp(ev){
 function logout(){ localStorage.removeItem(SESSION_KEY); location.reload(); }
 document.getElementById("logoutBtn").addEventListener("click", logout);
 document.getElementById("homeBtn").addEventListener("click",()=>{
-  document.getElementById("eventOverlay").style.display="flex";
+  document.getElementById("eventOverlay").style.display="block";
+});
+document.getElementById("eventClose").addEventListener("click",()=>{
+  document.getElementById("eventOverlay").style.display="none";
 });
 
 document.getElementById("saveScoutNameBtn").addEventListener("click",()=>{
