@@ -165,7 +165,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   <!-- ===== TOP BAR ===== -->
   <div class="topbar">
-    <div class="logo"><span>5449</span> SCOUT</div>
+    <div class="logo"><span>5449</span> SCOUT <span id="eventBadge" style="font-size:11px;color:#ff9500;margin-left:8px;"></span></div>
     <div class="rec-count" id="recCount">0 条</div>
     <span id="cloudDot" style="font-size:11px;color:#f66;">● 离线</span>
     <span id="onlineDot" style="font-size:11px;color:#6f6;">● 在线 0 台</span>
@@ -1211,6 +1211,8 @@ function enterApp(ev){
   localStorage.setItem("scout5449_event", ev);
   document.getElementById("eventSel").value=ev;
   document.getElementById("eventSel").querySelectorAll("option").forEach(o=>{ if(o.value===ev) o.selected=true; });
+  const evName = OFFICIAL_EVENTS.find(e=>e.id===ev);
+  document.getElementById("eventBadge").textContent = evName ? evName.name : "";
   refreshTeamDropdown();
   toast("欢迎 "+state.scoutName);
   refreshMe();
