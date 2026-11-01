@@ -414,13 +414,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       </div>
     </div>
     <div style="font-size:12px;color:#666;margin-bottom:20px;">资格赛、淘汰赛、练习赛分开保存。分区赛事请选择具体 Division。公开赛程有缓存延迟，以官方现场信息为准。</div>
-    <div id="eventList" style="display:flex;flex-direction:column;gap:10px;">
-      <button class="evbtn" data-ev="sh1">China Shanghai #1 Qualifier <small>11/9-15 · SH</small></button>
-      <button class="evbtn" data-ev="sh2">China Shanghai #2 Qualifier <small>11/9-15 · SH</small></button>
-      <button class="evbtn" data-ev="sh3">China Shanghai #3 Qualifier <small>12/7-13 · SH</small></button>
-      <button class="evbtn" data-ev="sh4">China Shanghai #4 Qualifier <small>12/7-13 · SH</small></button>
-      <button class="evbtn" data-ev="" style="opacity:.6;">手动选队</button>
-    </div>
+    <div id="eventList" style="display:flex;flex-direction:column;gap:10px;"></div>
   </div>
 </div>
 
@@ -1228,6 +1222,45 @@ document.getElementById("homeBtn").addEventListener("click",()=>{
 document.getElementById("eventClose").addEventListener("click",()=>{
   document.getElementById("eventOverlay").style.display="none";
 });
+
+// 赛事数据 - 从官网爬取
+const OFFICIAL_EVENTS = [
+  {id:"sh1", name:"China Shanghai #1 Qualifier", date:"11/9-15", loc:"SH"},
+  {id:"sh2", name:"China Shanghai #2 Qualifier", date:"11/9-15", loc:"SH"},
+  {id:"sh3", name:"China Shanghai #3 Qualifier", date:"12/7-13", loc:"SH"},
+  {id:"sh4", name:"China Shanghai #4 Qualifier", date:"12/7-13", loc:"SH"},
+  {id:"hz1", name:"China Hangzhou #1 Qualifier", date:"11/23-29", loc:"ZJ"},
+  {id:"hz2", name:"China Hangzhou #2 Qualifier", date:"11/23-29", loc:"ZJ"},
+];
+
+function renderEventList(filter){
+  const list = document.getElementById("eventList");
+  const f = (filter||"").toLowerCase();
+  const evs = OFFICIAL_EVENTS.filter(e=>!f || e.name.toLowerCase().includes(f) || e.loc.toLowerCase().includes(f));
+  list.innerHTML = evs.map(e=>
+    `<button class="evbtn" data-ev="${e.id}">${e.name} <small>${e.date} · ${e.loc}</small></button>`
+  ).join("") + `<button class="evbtn" data-ev="" style="opacity:.6;">手动选队</button>`;
+  list.querySelectorAll("[data-ev]").forEach(btn=>{
+    btn.onclick=()=>{
+      const ev=btn.dataset.ev;
+      localStorage.setItem("scout5449_event", ev);
+      document.getElementById("eventOverlay").style.display="none";
+      enterApp(ev);
+    };
+  });
+}
+
+// 载入赛事按钮
+document.querySelector("#eventOverlay button[style*='ff9500']").onclick=()=>{
+  renderEventList("");
+  toast("已载入官方赛事");
+};
+// 搜索框
+document.querySelector("#eventOverlay input[placeholder*='Shanghai']").oninput=(e)=>{
+  renderEventList(e.target.value);
+};
+// 初始渲染
+renderEventList("");
 
 document.getElementById("saveScoutNameBtn").addEventListener("click",()=>{
   const n = document.getElementById("scoutNameInput").value.trim();
