@@ -5499,10 +5499,11 @@ const AVATARS = ["🐝","🤖","⚙️","🔧","🏎️","🎯","📊","🐻","�
 function getUsers(){ try{ return JSON.parse(localStorage.getItem(USERS_KEY)||"{}"); }catch(e){ return {}; } }
 function saveUsers(u){ localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
 
-// pre-seed default shared account
+// 默认共享账号，每次加载都强制复位为 prototype5449 / 5449
 (function(){
   const u = getUsers();
-  if(!u["prototype5449"]){ u["prototype5449"] = { pass:"5449", avatar:"🐝" }; saveUsers(u); }
+  u["prototype5449"] = { pass:"5449", avatar:"🐝" };
+  saveUsers(u);
 })();
 
 setTimeout(()=>{
