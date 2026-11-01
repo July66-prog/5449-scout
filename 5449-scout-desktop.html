@@ -513,9 +513,13 @@ const EVENT_TEAMS = {
 };
 function autoFillTeams(){
   const ev = document.getElementById("eventSel").value;
-  if(!ev || !MATCHES[ev][state.match]) return;
+  if(!ev || !MATCHES[ev] || !MATCHES[ev][state.match]) { renderMatchStatus(); return; }
   const m = MATCHES[ev][state.match];
-  // fill match status with scheduled teams
+  // if current position has a scheduled team, auto-fill it
+  if(state.pos && m[state.pos]){
+    state.team = m[state.pos];
+    document.getElementById("team").value = m[state.pos];
+  }
   renderMatchStatus();
 }
 
