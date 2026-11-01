@@ -2170,9 +2170,9 @@ const OFFICIAL_EVENTS = [
 function renderEventList(filter){
   const list = document.getElementById("eventList");
   const f = (filter||"").toLowerCase();
-  const evs = OFFICIAL_EVENTS.filter(e=>!f || e.name.toLowerCase().includes(f) || e.loc.toLowerCase().includes(f));
+  const evs = OFFICIAL_EVENTS.filter(e=>!f || e.name.toLowerCase().includes(f) || e.id.toLowerCase().includes(f));
   list.innerHTML = evs.map(e=>
-    `<button class="evbtn" data-ev="${e.id}">${e.name} <small>${e.date} · ${e.loc}</small></button>`
+    `<button class="evbtn" data-ev="${e.id}">${e.name} <small>${e.id}</small></button>`
   ).join("") + `<button class="evbtn" data-ev="" style="opacity:.6;">手动选队</button>`;
   list.querySelectorAll("[data-ev]").forEach(btn=>{
     btn.onclick=()=>{
